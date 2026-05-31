@@ -6,6 +6,8 @@
 
 A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑readers. Displays the current time, weather, date, and a random quote directly on the e‑ink display via the raw framebuffer — no browser, no app, no bloated dependencies.
 
+![Screenshot](screenshot.png)
+
 ## Features
 
 - **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator
