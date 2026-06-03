@@ -10,7 +10,7 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 
 ## Features
 
-- **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator
+- **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator, sub-second drift due to render-last timing
 - **Weather** — UV index, high/low temperature from [Open‑Meteo](https://open-meteo.com/) (zero API key, zero cost)
 - **Battery indicator** — live capacity readout from the kernel sysfs interface
 - **Random quotes** — fetched from [Quotable](https://github.com/lukePeavey/quotable) with a local fallback list
@@ -164,7 +164,7 @@ Or create an upstart config in `/etc/init.d/` for proper process management.
 4. **PNG encoding** — the raw grayscale buffer is converted to a PNG in memory (zlib + minimal PNG writer, ~30 lines).
 5. **Display** — the PNG is written to `/tmp/d.png` and pushed to the framebuffer via Amazon's `eips` utility, then deleted.
 6. **Anti‑sleep** — `lipc-set-prop com.lab126.powerd preventSleep 1` re‑asserted every cycle to prevent both screensaver and deep suspend.
-7. **Sync** — after each refresh, the script sleeps until the next `:00` second of the minute, keeping the display aligned with the wall clock.
+7. **Sync** — after each refresh, the script sleeps until the next `:00` second of the minute, keeping the display aligned with the wall clock. Time is captured immediately before clock rendering (not at the start of the cycle), so API latency does not affect clock accuracy. Drift cannot accumulate because the sleep target is recalculated from the wall clock every cycle.
 
 ## Troubleshooting
 

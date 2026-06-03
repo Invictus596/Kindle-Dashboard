@@ -114,6 +114,9 @@ F['Y']=[0x82,0x44,0x28,0x10,0x10,0x10,0x10,0x00]
 F['Z']=[0xFE,0x04,0x08,0x10,0x20,0x40,0xFE,0x00]
 F['R']=[0xFC,0xC6,0xC6,0xFC,0xD8,0xCC,0xC6,0x00]
 
+def clock_bottom():
+ sc=20 if W==800 else 15; return H//6+sc*8
+
 def text(x,y,s,c=B,sc=1):
  for ch in s:
   r=F.get(ch)
@@ -208,47 +211,37 @@ def draw():
  weather=wthr()
  quote=qt()
  bp=bat()
+ mos='Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split()
+ cb=clock_bottom(); sc=2
 
  fill(0,0,W,H,W0)
 
- # capture time right before rendering, +1s to compensate for display lag
- now=datetime.now(TZ)+timedelta(seconds=1)
- h24,m=now.hour,now.minute
- ap='AM' if h24<12 else 'PM'
- h12=h24%12 or 12
- hs,ms=f'{h12:02d}',f'{m:02d}'
- clock_bottom=draw_clock(hs,ms,ap)
-
- # battery indicator — top right
+ # --- render static content first (doesn't need precise time) ---
  if bp>0:
-  bw=36; bh=16
-  bx=W-bw-8; by=4
+  bw=36; bh=16; bx=W-bw-8; by=4
   fill(bx,by,bw,bh,B)
   fill(bx+1,by+1,bw-2,bh-2,W0)
   fill(bx+bw,by+4,3,8,B)
   bwf=int((bp/100)*(bw-4))
   fill(bx+2,by+2,bwf,bh-4,B)
 
- sc=2
- # date
- mos='Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split()
+ now=datetime.now(TZ)
  ds=f'{mos[now.month-1]} {now.day}'
- text(W//2-tw(ds)*sc//2,clock_bottom+20,ds,B,sc)
-
- # weather
- text(W//2-tw(weather)*sc//2,clock_bottom+52,weather,B,sc)
-
- # separator
- fill(W//4,clock_bottom+78,W//2,1,B)
-
- # quote
+ text(W//2-tw(ds)*sc//2,cb+20,ds,B,sc)
+ text(W//2-tw(weather)*sc//2,cb+52,weather,B,sc)
+ fill(W//4,cb+78,W//2,1,B)
  ww=38 if W==800 else 30
  lines=textwrap.wrap(quote,width=ww)
  if len(lines)>2: lines=lines[:2]
  for i,l in enumerate(lines):
-  text(W//2-tw(l)*sc//2,clock_bottom+94+i*24,l,B,sc)
+  text(W//2-tw(l)*sc//2,cb+94+i*24,l,B,sc)
 
- # display
+ # --- capture precise time, render clock, display immediately ---
+ now=datetime.now(TZ)
+ h24,m=now.hour,now.minute
+ ap='AM' if h24<12 else 'PM'
+ draw_clock(f'{h24%12 or 12:02d}',f'{m:02d}',ap)
+
  os.system('/usr/sbin/eips -c 2>/dev/null')
  with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
  os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
@@ -259,9 +252,10 @@ def main():
   os.system('lipc-set-prop com.lab126.powerd preventScreenSaver 1 2>/dev/null')
   os.system('lipc-set-prop com.lab126.powerd preventSleep 1 2>/dev/null')
   draw()
-  # sync to minute boundary to keep display aligned with wall clock
+  # sleep precisely to the next minute boundary (no drift accumulation)
   now=datetime.now(TZ)
-  time.sleep(max(0.5,60-now.second))
+  nxt=now.replace(second=0,microsecond=0)+timedelta(minutes=1)
+  time.sleep(max(0.1,(nxt-datetime.now(TZ)).total_seconds()))
 
 if __name__=='__main__':
  main()
