@@ -169,30 +169,35 @@ def wthr():
   return f'{c["city"]}  UV:{uv}  H:{hi}°C  L:{lo}°C'
  except: return f'{c["city"]}  UV:--  H:--°C  L:--°C'
 
-QTS=[
- "The only true wisdom is in knowing you know nothing.",
- "Simplicity is the ultimate sophistication.",
+FALLBACK_QT=[
  "The unexamined life is not worth living.",
+ "Simplicity is the ultimate sophistication.",
  "Less is more.",
- "Be yourself; everyone else is already taken.",
- "It does not matter how slowly you go as long as you do not stop.",
- "In the middle of difficulty lies opportunity.",
- "The best time to plant a tree was 20 years ago. The second best is now.",
- "Everything you can imagine is real.",
- "The quieter you become, the more you can hear.",
- "Not all those who wander are lost.",
- "The journey of a thousand miles begins with a single step.",
- "Believe you can and you are halfway there.",
+ "Stay hungry, stay foolish.",
+ "The obstacle is the way.",
+ "Do or do not. There is no try.",
+ "What you seek is seeking you.",
+ "The only way out is through.",
+ "Life is what happens when you are busy making plans.",
+ "The best revenge is massive success.",
 ]
 
 def qt():
+ # 1. local quotes file (user-extendable, survives reboots)
+ try:
+  p=os.path.join(os.path.dirname(os.path.abspath(__file__)),'quotes.txt')
+  with open(p) as f: lines=[l.strip() for l in f if l.strip()]
+  if lines: return random.choice(lines)
+ except: pass
+ # 2. API
  try:
   u='https://api.quotable.io/random?maxLength=60'
   r=req.urlopen(req.Request(u,headers={'User-Agent':'kindle-dash'}),timeout=10,context=ctx)
   c=json.loads(r.read()).get('content','')
   if len(c)<=60: return c
  except: pass
- return random.choice(QTS)
+ # 3. in-memory fallback (small, last resort)
+ return random.choice(FALLBACK_QT)
 
 def bat():
  try:
