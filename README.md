@@ -13,7 +13,7 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 - **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator, sub-second drift due to render-last timing
 - **Weather** — UV index, high/low temperature from [Open‑Meteo](https://open-meteo.com/) (zero API key, zero cost)
 - **Battery indicator** — live capacity readout from the kernel sysfs interface
-- **Random quotes** — fetched from [Quotable](https://github.com/lukePeavey/quotable) with a local fallback list
+- **Random quotes** — drawn from `quotes.txt` (edit to add your own), with API fetch from [Quotable](https://github.com/lukePeavey/quotable) and a small in-memory fallback
 - **Auto‑orientation** — detects landscape (800×600) and portrait (600×800) modes
 - **Anti‑sleep** — prevents screensaver *and* suspend via `lipc-set-prop`
 - **Configurable** — city, coordinates, timezone, refresh rate, battery path in a single JSON file
@@ -36,6 +36,7 @@ scp dash.py config.json root@192.168.1.10:/mnt/us/
 ```
 kindle-dashboard/
 ├── dash.py                  # Main dashboard script
+├── quotes.txt               # Curated quote collection (add your own)
 ├── config.json              # User configuration
 ├── fix_fat32_symlinks.sh    # FAT32 workaround for Entware on Kindle
 ├── .gitignore
