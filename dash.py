@@ -5,7 +5,8 @@ from datetime import datetime,timezone,timedelta
 def load_config():
  d={
   "city":"Hyderabad","latitude":17.3850,"longitude":78.4867,"tz_offset_minutes":330,
-  "refresh_interval":60,"battery_path":"/sys/class/power_supply/bd71827_bat/capacity"
+  "refresh_interval":60,"battery_path":"/sys/class/power_supply/bd71827_bat/capacity",
+  "name":""
  }
  try:
   p=os.path.join(os.path.dirname(os.path.abspath(__file__)),'config.json')
@@ -115,7 +116,15 @@ F['Z']=[0xFE,0x04,0x08,0x10,0x20,0x40,0xFE,0x00]
 F['R']=[0xFC,0xC6,0xC6,0xFC,0xD8,0xCC,0xC6,0x00]
 
 def clock_bottom():
- sc=20 if W==800 else 15; return H//6+sc*8
+ sc=20 if W==800 else 15; return H//6+sc*8+30
+
+def greeting(h):
+ n=CFG.get('name','') or 'there'
+ if h<5:  return f"It's late, {n}"
+ if h<12: return f"Good morning, {n}"
+ if h<17: return f"Good afternoon, {n}"
+ if h<21: return f"Good evening, {n}"
+ return f"It's late, {n}"
 
 def text(x,y,s,c=B,sc=1):
  for ch in s:
@@ -141,7 +150,7 @@ def draw_clock(hs,ms,ap):
  gap = sc*2
  total_w = cw*4 + gap*2
  ox = (W - total_w)//2
- oy = H//6
+ oy = H//6 + 30  # shift down for greeting
  cx = ox + cw*2 + gap  # colon center
 
  text(ox, oy, hs, B, sc)
@@ -241,10 +250,11 @@ def draw():
  for i,l in enumerate(lines):
   text(W//2-tw(l)*sc//2,cb+94+i*24,l,B,sc)
 
- # --- capture precise time, render clock, display immediately ---
+ # --- capture precise time, render greeting + clock, display immediately ---
  now=datetime.now(TZ)
  h24,m=now.hour,now.minute
  ap='AM' if h24<12 else 'PM'
+ text(W//2-tw(greeting(h24))*2//2,H//6-16,greeting(h24),B,2)
  draw_clock(f'{h24%12 or 12:02d}',f'{m:02d}',ap)
 
  os.system('/usr/sbin/eips -c 2>/dev/null')

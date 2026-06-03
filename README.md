@@ -11,6 +11,7 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 ## Features
 
 - **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator, sub-second drift due to render-last timing
+- **Greeting** — time‑aware greeting (Good morning / afternoon / evening / late) with your name from `config.json`
 - **Weather** — UV index, high/low temperature from [Open‑Meteo](https://open-meteo.com/) (zero API key, zero cost)
 - **Battery indicator** — live capacity readout from the kernel sysfs interface
 - **Random quotes** — drawn from `quotes.txt` (edit to add your own), with API fetch from [Quotable](https://github.com/lukePeavey/quotable) and a small in-memory fallback
@@ -114,6 +115,7 @@ Edit `config.json`:
 | `tz_offset_minutes` | UTC offset in minutes (positive east) | `330` (IST), `-300` (EST) |
 | `refresh_interval` | Seconds between screen refreshes | `60` |
 | `battery_path` | Sysfs battery capacity node | varies by model (see below) |
+| `name` | Your name for the greeting | `"Invictus"` (blank → "there") |
 
 **The config file is optional** — the script ships with sensible defaults (Hyderabad, UTC+5:30). Just edit to match your location.
 
