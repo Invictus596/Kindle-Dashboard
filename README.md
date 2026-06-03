@@ -24,9 +24,9 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 
 ```bash
 # copy to kindle
-scp dash.py config.json root@192.168.1.10:/mnt/us/
+scp dash.py config.json quotes.txt root@192.168.1.10:/mnt/us/
 
-# edit your location
+# edit your location and name
 # then ssh in and run
 . /etc/profile
 /opt/bin/python3 /mnt/us/dash.py &
@@ -104,7 +104,8 @@ Edit `config.json`:
   "longitude": -74.0060,
   "tz_offset_minutes": -300,
   "refresh_interval": 60,
-  "battery_path": "/sys/class/power_supply/bd71827_bat/capacity"
+  "battery_path": "/sys/class/power_supply/bd71827_bat/capacity",
+  "name": ""
 }
 ```
 
@@ -158,7 +159,7 @@ Or create an upstart config in `/etc/init.d/` for proper process management.
 └─────────────┘     └──────────┘     └──────────┘     └───────────┘
                           ▲
                           │ time captured here
-                          │ (+1s offset for display lag)
+                          │ (just before clock render)
 ```
 
 1. **Data fetch** — weather (Open‑Meteo) and quote (Quotable) are fetched over HTTPS. If either fails, fallback data is used.
@@ -179,7 +180,7 @@ Or create an upstart config in `/etc/init.d/` for proper process management.
 | Time is wrong | Incorrect `tz_offset_minutes` | IST = `330`, EST = `-300`, CET = `60`, JST = `540` |
 | Script exits immediately | Python 3 not found | `opkg install python3` |
 | `opkg` fails with "Cannot create symlink" | FAT32 filesystem | Run `fix_fat32_symlinks.sh` to recreate symlinks as file copies |
-| Clock lags behind | Display latency | The script compensates with a +1s offset; ≤ 1s error is expected |
+| Clock lags behind | Display latency | Time is captured right before clock render, sleep targets the exact next `:00` — ≤ 1s error is expected |
 
 ## License
 
