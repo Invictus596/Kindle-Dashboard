@@ -4,5 +4,6 @@
   "longitude": 78.4867,
   "tz_offset_minutes": 330,
   "refresh_interval": 60,
-  "battery_path": "/sys/class/power_supply/bd71827_bat/capacity"
+  "battery_path": "/sys/class/power_supply/bd71827_bat/capacity",
+  "name": "Invictus"
 }
