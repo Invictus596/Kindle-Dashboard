@@ -246,7 +246,8 @@ def draw():
  fill(W//4,cb+78,W//2,1,B)
  ww=38 if W==800 else 30
  lines=textwrap.wrap(quote,width=ww)
- if len(lines)>2: lines=lines[:2]
+ maxl=(H-(cb+94)-10)//24
+ if len(lines)>maxl: lines=lines[:maxl]
  for i,l in enumerate(lines):
   text(W//2-tw(l)*sc//2,cb+94+i*24,l,B,sc)
 
