@@ -278,15 +278,22 @@ def invert_pulse():
 def main():
  cyc=0
  while True:
-  os.system('lipc-set-prop com.lab126.powerd preventScreenSaver 1 2>/dev/null')
-  os.system('lipc-set-prop com.lab126.powerd preventSleep 1 2>/dev/null')
-  draw()
-  cyc+=1
-  if cyc%INV_EVERY==0: invert_pulse()
-  # sleep precisely to the next minute boundary (no drift accumulation)
-  now=datetime.now(TZ)
-  nxt=now.replace(second=0,microsecond=0)+timedelta(minutes=1)
-  time.sleep(max(0.1,(nxt-datetime.now(TZ)).total_seconds()))
+  try:
+   os.system('lipc-set-prop com.lab126.powerd preventScreenSaver 1 2>/dev/null')
+   os.system('lipc-set-prop com.lab126.powerd preventSleep 1 2>/dev/null')
+   draw()
+   cyc+=1
+   if cyc%INV_EVERY==0: invert_pulse()
+   # sleep precisely to the next minute boundary (no drift accumulation)
+   now=datetime.now(TZ)
+   nxt=now.replace(second=0,microsecond=0)+timedelta(minutes=1)
+   time.sleep(max(0.1,(nxt-datetime.now(TZ)).total_seconds()))
+  except:
+   with open('/tmp/dash.crash','a') as f:
+    f.write(f'{datetime.now(TZ)}: UNHANDLED\n')
+    import traceback
+    traceback.print_exc(file=f)
+   time.sleep(60)
 
 if __name__=='__main__':
  main()
