@@ -262,11 +262,26 @@ def draw():
  os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
  os.system('rm -f /tmp/d.png 2>/dev/null')
 
+INV_EVERY=10  # invert pulse every N cycles (~10 min at 60s refresh)
+
+def invert_pulse():
+ for i in range(len(buf)): buf[i]=W0-buf[i]
+ with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
+ os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
+ time.sleep(0.8)
+ for i in range(len(buf)): buf[i]=W0-buf[i]
+ with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
+ os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
+ os.system('rm -f /tmp/d.png 2>/dev/null')
+
 def main():
+ cyc=0
  while True:
   os.system('lipc-set-prop com.lab126.powerd preventScreenSaver 1 2>/dev/null')
   os.system('lipc-set-prop com.lab126.powerd preventSleep 1 2>/dev/null')
   draw()
+  cyc+=1
+  if cyc%INV_EVERY==0: invert_pulse()
   # sleep precisely to the next minute boundary (no drift accumulation)
   now=datetime.now(TZ)
   nxt=now.replace(second=0,microsecond=0)+timedelta(minutes=1)
