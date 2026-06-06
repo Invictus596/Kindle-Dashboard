@@ -53,6 +53,7 @@ kindle-dashboard/
 - [Entware](https://entware.net/) installed on the user store (`/mnt/us`)
 - Python ≥ 3.9 from Entware
 - Network access (Wi‑Fi) for weather and quote APIs
+- Patience 
 
 ### Tested on
 
