@@ -20,6 +20,7 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 - **Ghosting guard** — full‑screen inversion pulse every 10 minutes clears e‑ink image retention (no burn‑in risk)
 - **Configurable** — city, coordinates, timezone, refresh rate, battery path in a single JSON file
 - **Minimal dependencies** — pure Python, no PIL, no Pillow, no numpy
+- More to come
 
 ## Quick start
 
