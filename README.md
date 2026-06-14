@@ -17,8 +17,9 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 - **Random quotes** — drawn from `quotes.txt` (edit to add your own), with API fetch from [Quotable](https://github.com/lukePeavey/quotable) and a small in-memory fallback
 - **Auto‑orientation** — detects landscape (800×600) and portrait (600×800) modes
 - **Anti‑sleep** — prevents screensaver *and* suspend via `lipc-set-prop`
+- **Dark mode** — invert the entire palette via `"dark_mode": true` in `config.json` (easier on the eyes at night)
 - **Ghosting guard** — full‑screen inversion pulse every 10 minutes clears e‑ink image retention (no burn‑in risk)
-- **Configurable** — city, coordinates, timezone, refresh rate, battery path in a single JSON file
+- **Configurable** — city, coordinates, timezone, refresh rate, battery path, name, dark mode in a single JSON file
 - **Minimal dependencies** — pure Python, no PIL, no Pillow, no numpy
 - More to come
 

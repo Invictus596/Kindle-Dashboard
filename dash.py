@@ -6,7 +6,7 @@ def load_config():
  d={
   "city":"Hyderabad","latitude":17.3850,"longitude":78.4867,"tz_offset_minutes":330,
   "refresh_interval":60,"battery_path":"/sys/class/power_supply/bd71827_bat/capacity",
-  "name":""
+  "name":"","dark_mode":False
  }
  try:
   p=os.path.join(os.path.dirname(os.path.abspath(__file__)),'config.json')
@@ -25,7 +25,8 @@ def fb_dim():
  except: return 800,600
 
 W,H=fb_dim()
-W0=255;B=0
+if CFG.get('dark_mode',False): W0=0;B=255
+else: W0=255;B=0
 buf=bytearray([W0])*W*H
 
 def px(x,y,c):
