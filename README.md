@@ -14,7 +14,9 @@ A full‑screen, black‑and‑white dashboard for jailbroken Amazon Kindle e‑
 ## Features
 
 - **Large clock** — 8×8 bitmap font rendered at high scale with AM/PM indicator, sub-second drift due to render-last timing
+- **Hourly chime** — brief screen flash on every hour so you can feel time passing
 - **Greeting** — time‑aware greeting (Good morning / afternoon / evening / late) with your name from `config.json`
+- **Moon phase** — tiny moon icon next to the date because looking at the sky is overrated
 - **Weather** — UV index, high/low temperature from [Open‑Meteo](https://open-meteo.com/) (zero API key, zero cost)
 - **Battery indicator** — live capacity readout from the kernel sysfs interface
 - **Random quotes** — drawn from `quotes.txt` (edit to add your own), with API fetch from [Quotable](https://github.com/lukePeavey/quotable) and a small in-memory fallback
