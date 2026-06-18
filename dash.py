@@ -116,6 +116,31 @@ F['Y']=[0x82,0x44,0x28,0x10,0x10,0x10,0x10,0x00]
 F['Z']=[0xFE,0x04,0x08,0x10,0x20,0x40,0xFE,0x00]
 F['R']=[0xFC,0xC6,0xC6,0xFC,0xD8,0xCC,0xC6,0x00]
 
+# Moon phase bitmaps (8x8, index = phase index 0-7)
+M=[
+ [0x3C,0x42,0x81,0x81,0x81,0x81,0x42,0x3C],  # 0 New
+ [0x3C,0x46,0x83,0x83,0x83,0x83,0x46,0x3C],  # 1 Waxing crescent
+ [0x0C,0x1E,0x3F,0x3F,0x3F,0x3F,0x1E,0x0C],  # 2 First quarter
+ [0x2C,0x5E,0xBF,0xBF,0xBF,0xBF,0x5E,0x2C],  # 3 Waxing gibbous
+ [0x3C,0x7E,0xFF,0xFF,0xFF,0xFF,0x7E,0x3C],  # 4 Full
+ [0x34,0x7A,0xFD,0xFD,0xFD,0xFD,0x7A,0x34],  # 5 Waning gibbous
+ [0x30,0x78,0xFC,0xFC,0xFC,0xFC,0x78,0x30],  # 6 Last quarter
+ [0x3C,0x62,0xC1,0xC1,0xC1,0xC1,0x62,0x3C],  # 7 Waning crescent
+]
+
+def moon_phase(date):
+ kn=datetime(2000,1,6,18,14,tzinfo=timezone.utc)
+ d=(date-kn).total_seconds()/86400
+ return (d%29.53058867)/29.53058867
+
+def draw_moon(x,y,phase,sc=2):
+ idx=int((phase%1)*8+.5)%8
+ bm=M[idx]
+ for ri in range(8):
+  r=bm[ri]
+  for ci in range(8):
+   if r & (1<<(7-ci)): fill(x+ci*sc,y+ri*sc,sc,sc,B)
+
 def clock_bottom():
  sc=20 if W==800 else 15; return H//6+sc*8+30
 
@@ -242,7 +267,11 @@ def draw():
 
  now=datetime.now(TZ)
  ds=f'{mos[now.month-1]} {now.day}'
- text(W//2-tw(ds)*sc//2,cb+20,ds,B,sc)
+ mp=moon_phase(now)
+ moon_w=8*sc; gap=4*sc
+ gx=W//2-(moon_w+gap+tw(ds)*sc)//2
+ draw_moon(gx,cb+20,mp,sc)
+ text(gx+moon_w+gap,cb+20,ds,B,sc)
  text(W//2-tw(weather)*sc//2,cb+52,weather,B,sc)
  fill(W//4,cb+78,W//2,1,B)
  ww=38 if W==800 else 30
@@ -262,6 +291,14 @@ def draw():
  os.system('/usr/sbin/eips -c 2>/dev/null')
  with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
  os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
+ if m==0:
+  for i in range(len(buf)): buf[i]=W0-buf[i]
+  with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
+  os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
+  time.sleep(0.3)
+  for i in range(len(buf)): buf[i]=W0-buf[i]
+  with open('/tmp/d.png','wb') as f: f.write(png(buf,W,H))
+  os.system('/usr/sbin/eips -g /tmp/d.png 2>/dev/null')
  os.system('rm -f /tmp/d.png 2>/dev/null')
 
 INV_EVERY=10  # invert pulse every N cycles (~10 min at 60s refresh)
